@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace swqt_mkr1
 {
@@ -21,10 +23,11 @@ namespace swqt_mkr1
             tasks = new List<Task>();
 
             listBoxTasks = new ListBox() { Top = 10, Left = 10, Width = 350, Height = 200 };
-            listBoxTasks.MouseDown += ListBoxTasks_MouseDown; // Detect right-click
+            listBoxTasks.MouseDown += ListBoxTasks_MouseDown;
 
             contextMenu = new ContextMenuStrip();
             contextMenu.Items.Add("Add Task", null, AddTask_Click);
+            contextMenu.Items.Add("Edit Task", null, EditTask_Click);
             contextMenu.Items.Add("Delete Task", null, DeleteTask_Click);
 
             listBoxTasks.ContextMenuStrip = contextMenu;
@@ -49,11 +52,30 @@ namespace swqt_mkr1
             }
         }
 
+        private void EditTask_Click(object sender, EventArgs e)
+        {
+            if (listBoxTasks.SelectedItem is Task selectedTask)
+            {
+                using (AddTaskForm editForm = new AddTaskForm(selectedTask))
+                {
+                    if (editForm.ShowDialog() == DialogResult.OK)
+                    {
+                        // Update the task
+                        int index = tasks.IndexOf(selectedTask);
+                        if (index >= 0)
+                        {
+                            tasks[index] = editForm.NewTask;
+                            listBoxTasks.Items[index] = editForm.NewTask; // Update UI
+                        }
+                    }
+                }
+            }
+        }
+
         private void DeleteTask_Click(object sender, EventArgs e)
         {
-            if (listBoxTasks.SelectedItem != null)
+            if (listBoxTasks.SelectedItem is Task selectedTask)
             {
-                Task selectedTask = (Task)listBoxTasks.SelectedItem;
                 tasks.Remove(selectedTask);
                 listBoxTasks.Items.Remove(selectedTask);
             }
@@ -66,7 +88,7 @@ namespace swqt_mkr1
                 int index = listBoxTasks.IndexFromPoint(e.Location);
                 if (index != ListBox.NoMatches)
                 {
-                    listBoxTasks.SelectedIndex = index; // Select the task under the cursor
+                    listBoxTasks.SelectedIndex = index; // Select task under cursor
                 }
             }
         }
