@@ -20,7 +20,7 @@ jobs:
           dotnet-version: '4.7.2'  
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: nuget restore swqt_mkr1.sln
 
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
