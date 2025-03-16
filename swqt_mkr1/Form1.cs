@@ -17,19 +17,18 @@ namespace swqt_mkr1
         private List<ListBox> taskLists = new List<ListBox>();
         private ContextMenuStrip listContextMenu;
         private ContextMenuStrip formContextMenu;
-        private int nextListX = 10; // X position for new lists
-        private int nextListY = 10; // Y position for new lists
-        private ListBox activeListBox = null; // Stores the right-clicked ListBox
+        private int nextListX = 10;
+        private int nextListY = 10; 
+        private ListBox activeListBox = null;
 
         public Form1()
         {
-            // Context menu for task lists
             listContextMenu = new ContextMenuStrip();
             listContextMenu.Items.Add("Add Task", null, AddTask_Click);
             listContextMenu.Items.Add("Edit Task", null, EditTask_Click);
             listContextMenu.Items.Add("Delete Task", null, DeleteTask_Click);
+            listContextMenu.Items.Add("Delete List", null, DeleteList_Click);
 
-            // Context menu for creating new lists
             formContextMenu = new ContextMenuStrip();
             formContextMenu.Items.Add("Create New List", null, CreateNewList_Click);
             this.ContextMenuStrip = formContextMenu;
@@ -49,17 +48,16 @@ namespace swqt_mkr1
                 Top = nextListY,
                 Width = 250,
                 Height = 200,
-                ContextMenuStrip = listContextMenu // Each list has its own context menu
+                ContextMenuStrip = listContextMenu
             };
 
-            newList.MouseDown += ListBoxTasks_MouseDown; // Capture right-clicked list
+            newList.MouseDown += ListBoxTasks_MouseDown;
 
             taskLists.Add(newList);
             Controls.Add(newList);
 
-            // Position next list beside the previous one
             nextListX += 260;
-            if (nextListX + 260 > this.Width) // If out of bounds, move to next row
+            if (nextListX + 260 > this.Width)
             {
                 nextListX = 10;
                 nextListY += 210;
@@ -101,18 +99,32 @@ namespace swqt_mkr1
             activeListBox.Items.Remove(activeListBox.SelectedItem);
         }
 
+        private void DeleteList_Click(object sender, EventArgs e)
+        {
+            if (activeListBox == null) return;
+
+            if (MessageBox.Show("Are you sure you want to delete this list?", "Confirm",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                Controls.Remove(activeListBox);
+                taskLists.Remove(activeListBox);
+                activeListBox.Dispose();
+                activeListBox = null;
+            }
+        }
+
         private void ListBoxTasks_MouseDown(object sender, MouseEventArgs e)
         {
             if (sender is ListBox listBox)
             {
-                activeListBox = listBox; // Set the active list box
+                activeListBox = listBox;
 
                 if (e.Button == MouseButtons.Right)
                 {
                     int index = listBox.IndexFromPoint(e.Location);
                     if (index != ListBox.NoMatches)
                     {
-                        listBox.SelectedIndex = index; // Select task on right-click
+                        listBox.SelectedIndex = index;
                     }
                 }
             }
