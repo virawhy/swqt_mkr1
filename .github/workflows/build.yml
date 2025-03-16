@@ -38,6 +38,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet-sonarscanner begin /k:"virawhy_swqt_mkr_1" /o:"test-organization-01" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          dotnet-sonarscanner begin /k:"virawhy_swqt_mkr1" /o:"test-organization-01" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build /p:GenerateResourceMSBuildArchitecture=x64
           dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
