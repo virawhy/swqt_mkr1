@@ -32,7 +32,7 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: Restore Dependencies
-        run: dotnet restore
+        run: nuget restore swqt_mkr1.sln
 
       - name: Build and Analyze with SonarCloud
         env:
