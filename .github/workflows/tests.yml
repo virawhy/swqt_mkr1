@@ -1,29 +1,29 @@
 name: Run Tests
 
-on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+on: [push, pull_request]
 
 jobs:
-  test:
+  build:
     runs-on: windows-latest
 
+    env:
+      DOTNET_ROOT: C:\Program Files\dotnet
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '9.0.100'  
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '9.0.x'  # Specify the required .NET version
+        architecture: 'x64'      # Specify the correct architecture
 
-      - name: Restore dependencies
-        run: nuget restore swqt_mkr1.sln
+    - name: Install dependencies
+      run: dotnet restore
 
-      - name: Build solution
-        run: dotnet build --configuration Release --no-restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
 
-      - name: Run tests
-        run: dotnet test --configuration Release --no-build --logger trx --results-directory TestResults
+    - name: Run tests
+      run: dotnet test --no-restore --verbosity normal
