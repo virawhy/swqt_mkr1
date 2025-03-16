@@ -20,7 +20,7 @@ jobs:
         architecture: 'x64'      # Specify the correct architecture
 
     - name: Install dependencies
-      run: dotnet restore
+      run: nuget restore swqt_mkr1.sln
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
