@@ -24,18 +24,15 @@ namespace swqt_mkr1
 
         public Form1()
         {
-            // Context menu for task lists
             listContextMenu = new ContextMenuStrip();
             listContextMenu.Items.Add("Add Task", null, AddTask_Click);
             listContextMenu.Items.Add("Edit Task", null, EditTask_Click);
             listContextMenu.Items.Add("Delete Task", null, DeleteTask_Click);
             listContextMenu.Items.Add("Delete List", null, DeleteList_Click);
 
-            // "Move Task To" submenu
             moveTaskMenuItem = new ToolStripMenuItem("Move Task To");
             listContextMenu.Items.Add(moveTaskMenuItem);
 
-            // Context menu for creating new lists
             formContextMenu = new ContextMenuStrip();
             formContextMenu.Items.Add("Create New List", null, CreateNewList_Click);
             this.ContextMenuStrip = formContextMenu;
