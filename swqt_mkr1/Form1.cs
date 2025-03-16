@@ -13,7 +13,7 @@ namespace swqt_mkr1
     public partial class Form1 : Form
     {
         private ListBox listBoxTasks;
-        private Button buttonAddTask;
+        private ContextMenuStrip contextMenu;
         private List<Task> tasks;
 
         public Form1()
@@ -21,19 +21,22 @@ namespace swqt_mkr1
             tasks = new List<Task>();
 
             listBoxTasks = new ListBox() { Top = 10, Left = 10, Width = 350, Height = 200 };
-            buttonAddTask = new Button() { Text = "Add Task", Top = 220, Left = 10 };
+            listBoxTasks.MouseDown += ListBoxTasks_MouseDown; // Detect right-click
 
-            buttonAddTask.Click += ButtonAddTask_Click;
+            contextMenu = new ContextMenuStrip();
+            contextMenu.Items.Add("Add Task", null, AddTask_Click);
+            contextMenu.Items.Add("Delete Task", null, DeleteTask_Click);
+
+            listBoxTasks.ContextMenuStrip = contextMenu;
 
             Controls.Add(listBoxTasks);
-            Controls.Add(buttonAddTask);
 
             Text = "Task Manager";
             Width = 400;
             Height = 300;
         }
 
-        private void ButtonAddTask_Click(object sender, EventArgs e)
+        private void AddTask_Click(object sender, EventArgs e)
         {
             using (AddTaskForm addTaskForm = new AddTaskForm())
             {
@@ -42,6 +45,28 @@ namespace swqt_mkr1
                     Task newTask = addTaskForm.NewTask;
                     tasks.Add(newTask);
                     listBoxTasks.Items.Add(newTask);
+                }
+            }
+        }
+
+        private void DeleteTask_Click(object sender, EventArgs e)
+        {
+            if (listBoxTasks.SelectedItem != null)
+            {
+                Task selectedTask = (Task)listBoxTasks.SelectedItem;
+                tasks.Remove(selectedTask);
+                listBoxTasks.Items.Remove(selectedTask);
+            }
+        }
+
+        private void ListBoxTasks_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                int index = listBoxTasks.IndexFromPoint(e.Location);
+                if (index != ListBox.NoMatches)
+                {
+                    listBoxTasks.SelectedIndex = index; // Select the task under the cursor
                 }
             }
         }
