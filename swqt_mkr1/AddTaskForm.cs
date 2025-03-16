@@ -19,9 +19,9 @@ namespace swqt_mkr1
 
         public Task NewTask { get; private set; }
 
-        public AddTaskForm()
+        public AddTaskForm(Task taskToEdit = null)
         {
-            Text = "Add New Task";
+            Text = taskToEdit == null ? "Add New Task" : "Edit Task";
             Width = 300;
             Height = 400;
 
@@ -61,6 +61,20 @@ namespace swqt_mkr1
             Controls.Add(dtpDueDate);
             Controls.Add(btnSave);
             Controls.Add(btnCancel);
+
+            if (taskToEdit != null)
+            {
+                // Pre-fill form with existing task details
+                txtName.Text = taskToEdit.Name;
+                txtDescription.Text = taskToEdit.Description;
+                txtPersons.Text = string.Join(", ", taskToEdit.AssignedPersons);
+                cmbStatus.SelectedItem = taskToEdit.Status;
+                if (taskToEdit.DueDate.HasValue)
+                {
+                    dtpDueDate.Value = taskToEdit.DueDate.Value;
+                    dtpDueDate.Checked = true;
+                }
+            }
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
