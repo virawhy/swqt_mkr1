@@ -18,17 +18,24 @@ namespace swqt_mkr1
         private ContextMenuStrip listContextMenu;
         private ContextMenuStrip formContextMenu;
         private int nextListX = 10;
-        private int nextListY = 10; 
+        private int nextListY = 10;
         private ListBox activeListBox = null;
+        private ToolStripMenuItem moveTaskMenuItem;
 
         public Form1()
         {
+            // Context menu for task lists
             listContextMenu = new ContextMenuStrip();
             listContextMenu.Items.Add("Add Task", null, AddTask_Click);
             listContextMenu.Items.Add("Edit Task", null, EditTask_Click);
             listContextMenu.Items.Add("Delete Task", null, DeleteTask_Click);
             listContextMenu.Items.Add("Delete List", null, DeleteList_Click);
 
+            // "Move Task To" submenu
+            moveTaskMenuItem = new ToolStripMenuItem("Move Task To");
+            listContextMenu.Items.Add(moveTaskMenuItem);
+
+            // Context menu for creating new lists
             formContextMenu = new ContextMenuStrip();
             formContextMenu.Items.Add("Create New List", null, CreateNewList_Click);
             this.ContextMenuStrip = formContextMenu;
@@ -55,6 +62,8 @@ namespace swqt_mkr1
 
             taskLists.Add(newList);
             Controls.Add(newList);
+
+            UpdateMoveTaskMenu();
 
             nextListX += 260;
             if (nextListX + 260 > this.Width)
@@ -110,6 +119,20 @@ namespace swqt_mkr1
                 taskLists.Remove(activeListBox);
                 activeListBox.Dispose();
                 activeListBox = null;
+                UpdateMoveTaskMenu();
+            }
+        }
+
+        private void MoveTask_Click(object sender, EventArgs e)
+        {
+            if (activeListBox == null || activeListBox.SelectedItem == null) return;
+
+            ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
+            if (clickedItem != null && clickedItem.Tag is ListBox targetList)
+            {
+                object taskToMove = activeListBox.SelectedItem;
+                activeListBox.Items.Remove(taskToMove);
+                targetList.Items.Add(taskToMove);
             }
         }
 
@@ -137,5 +160,20 @@ namespace swqt_mkr1
                 formContextMenu.Show(this, e.Location);
             }
         }
+
+        private void UpdateMoveTaskMenu()
+        {
+            moveTaskMenuItem.DropDownItems.Clear();
+
+            for (int i = 0; i < taskLists.Count; i++)
+            {
+
+                    ToolStripMenuItem listItem = new ToolStripMenuItem($"List{i + 1}");
+                    listItem.Tag = taskLists[i];
+                    listItem.Click += MoveTask_Click;
+                    moveTaskMenuItem.DropDownItems.Add(listItem);
+            }
+        }
+
     }
 }
